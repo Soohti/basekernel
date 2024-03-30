@@ -1,0 +1,31 @@
+name: Build Basekernel Image
+
+on: workflow_dispatch
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup
+      run: sudo apt-get install -y genisoimage
+
+    - name: Build Cross Compiler
+      run: ./build-cross-compiler.sh
+      
+    - name: Build Basekernal & Generate QEMU Image
+      run: export PATH="$PWD/cross/bin:$PATH" && make
+
+    - name: Upload QEMU Image
+      uses: actions/upload-artifact@v4
+      with:
+        name: QEMU Image
+        path: basekernel.iso
+        
+    - name: Upload Cross Compiler
+      uses: actions/upload-artifact@v4
+      with:
+        name: Cross Compiler
+        path: cross
