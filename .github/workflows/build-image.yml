@@ -12,8 +12,8 @@ jobs:
     - name: Setup
       run: sudo apt-get install -y genisoimage
 
-    - name: Build Cross Compiler
-      run: ./build-cross-compiler.sh
+    - name: Get Cross Compiler
+      run: wget https://github.com/Soohti/static/releases/download/cross_compiler/Cross.Compiler.zip && unzip Cross.Compiler.zip -d cross
       
     - name: Build Basekernal & Generate QEMU Image
       run: export PATH="$PWD/cross/bin:$PATH" && make
@@ -23,9 +23,3 @@ jobs:
       with:
         name: QEMU Image
         path: basekernel.iso
-        
-    - name: Upload Cross Compiler
-      uses: actions/upload-artifact@v4
-      with:
-        name: Cross Compiler
-        path: cross
