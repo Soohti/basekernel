@@ -13,7 +13,7 @@ jobs:
       run: sudo apt-get install -y genisoimage
 
     - name: Get Cross Compiler
-      run: wget https://github.com/Soohti/static/releases/download/cross_compiler/Cross.Compiler.zip && unzip Cross.Compiler.zip -d cross && chmod +x cross/bin/*
+      run: wget https://github.com/Soohti/static/releases/download/cross_compiler/Cross.Compiler.zip && unzip Cross.Compiler.zip
       
     - name: Build Basekernal & Generate QEMU Image
       run: export PATH="$PWD/cross/bin:$PATH" && make
