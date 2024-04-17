@@ -4,7 +4,6 @@
 #include "library/syscalls.h"
 #include "library/stdio.h"
 #include "library/errno.h"
-#include "kernel/process.h"
 
 void schedule_process(const char *exec, int priority) {
     int pfd = syscall_open_file(KNO_STDDIR, exec, 0, 0);
