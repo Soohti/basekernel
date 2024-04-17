@@ -23,20 +23,6 @@ void list_push_head(struct list *list, struct list_node *node)
 	list->size++;
 }
 
-void list_push_head_priority(struct list *list, struct list_node *node, int pri)
-{
-	node->next = list->head;
-	node->prev = 0;
-	node->priority = pri;
-	if(list->head)
-		list->head->prev = node;
-	list->head = node;
-	if(!list->tail)
-		list->tail = node;
-	node->list = list;
-	list->size++;
-}
-
 void list_push_tail(struct list *list, struct list_node *node)
 {
 	node->prev = list->tail;
@@ -56,7 +42,8 @@ void list_push_priority(struct list *list, struct list_node *node, int pri)
 	struct list_node *n;
 	int i = 0;
 	if(!list->head) {
-		list_push_head_priority(list, node, pri);
+		list_push_head(list, node);
+		node->priority = pri;
 		return;
 	}
 	for(n = list->head; n; n = n->next) {
