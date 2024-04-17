@@ -15,7 +15,7 @@ void runForSeconds(int seconds) {
 }
 
 int main(int argc, char **argv) {
-    printf("Process 1 (PID: %d) is running for 1 second\n", syscall_process_self());
+    printf("Process 1 (PID: %d, Priority: %d) is running for 1 second\n", syscall_process_self(), syscall_process_priority());
     runForSeconds(1);
     return 0;
 }

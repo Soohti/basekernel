@@ -1,3 +1,6 @@
+// Path: /kernel/list.h
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -26,6 +29,7 @@ struct list_node {
 #define LIST_INIT {0,0}
 
 void list_push_head(struct list *list, struct list_node *node);
+void list_push_head_priority(struct list *list, struct list_node *node, int pri);
 void list_push_tail(struct list *list, struct list_node *node);
 void list_push_priority(struct list *list, struct list_node *node, int pri);
 struct list_node *list_pop_head(struct list *list);

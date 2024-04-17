@@ -1,3 +1,6 @@
+// Path: /include/library/syscalls.h
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2016-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -18,16 +21,19 @@ void syscall_process_exit(int status);
 int syscall_process_yield();
 int syscall_process_run(int fd, int argc, const char **argv);
 int syscall_process_wrun(int fd, int argc, const char **argv,  int * fds, int fd_len);
+int syscall_process_run_with_priority(int fd, int argc, const char **argv, int pri);
 int syscall_process_fork();
 int syscall_process_exec(int fd, int argc, const char **argv);
 int syscall_process_self();
 int syscall_process_parent();
+int syscall_process_priority();
 int syscall_process_kill(unsigned int pid);
 int syscall_process_reap(unsigned int pid);
 int syscall_process_wait(struct process_info *info, int timeout);
 int syscall_process_sleep(unsigned int ms);
 int syscall_process_stats(struct process_stats *s, unsigned int pid);
 extern void *syscall_process_heap(int a);
+int syscall_process_run_blocked();
 
 /* Syscalls that open or create new kernel objects for this process. */
 

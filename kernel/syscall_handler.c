@@ -1,3 +1,7 @@
+// Path: /kernel/syscall_handler.c
+// Modified by CS3103 Group 70
+
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -196,6 +200,53 @@ int sys_process_wrun( int fd, int argc, const char **argv, int *fds, int fd_len)
 	return p->pid;
 }
 
+int sys_process_run_with_priority(int fd, int argc, const char **argv, int pri)
+{
+	if(!is_valid_object_type(fd,KOBJECT_FILE)) return KERROR_INVALID_OBJECT;
+	struct kobject *k = current->ktable[fd];
+
+	/* Copy argv into kernel memory. */
+	char **copy_argv = argv_copy(argc, argv);
+
+	/* Create the child process */
+	struct process *p = process_create_with_priority(pri);
+	process_inherit(current, p);
+
+	/* SWITCH TO ADDRESS SPACE OF CHILD PROCESS */
+	struct pagetable *old_pagetable = current->pagetable;
+	current->pagetable = p->pagetable;
+	pagetable_load(p->pagetable);
+
+	/* Attempt to load the program image. */
+	addr_t entry;
+	int r = elf_load(p, k->data.file, &entry);
+	if(r >= 0) {
+		/* If load succeeded, reset stack and pass arguments */
+		process_stack_reset(p, PAGE_SIZE);
+		process_kstack_reset(p, entry);
+		process_pass_arguments(p, argc, copy_argv);
+	}
+
+	/* SWITCH BACK TO ADDRESS SPACE OF PARENT PROCESS */
+	current->pagetable = old_pagetable;
+	pagetable_load(old_pagetable);
+
+	/* Delete the argument and path copies. */
+	argv_delete(argc, copy_argv);
+
+	/* If any error happened, return in the context of the parent */
+	if(r < 0) {
+		if(r == KERROR_EXECUTION_FAILED) {
+			process_delete(p);
+		}
+		return r;
+	}
+
+	/* Otherwise, launch the new child process. */
+	process_launch_with_priority(p, pri);
+	return p->pid;
+}
+
 int sys_process_exec( int fd, int argc, const char **argv)
 {
 	if(!is_valid_object_type(fd,KOBJECT_FILE)) return KERROR_INVALID_OBJECT;
@@ -261,6 +312,11 @@ int sys_process_parent()
 	return current->ppid;
 }
 
+int sys_process_priority()
+{
+	return current->priority;
+}
+
 int sys_process_kill(int pid)
 {
 	return process_kill(pid);
@@ -293,6 +349,12 @@ int sys_process_heap(int delta)
 {
 	process_data_size_set(current, current->vm_data_size + delta);
 	return PROCESS_ENTRY_POINT + current->vm_data_size;
+}
+
+int sys_process_run_blocked()
+{
+	process_run_blocked();
+	return 0;
 }
 
 int sys_object_list( int fd, char *buffer, int length)
@@ -567,6 +629,8 @@ int32_t syscall_handler(syscall_t n, uint32_t a, uint32_t b, uint32_t c, uint32_
 		return sys_process_run(a, b, (const char **)c);
 	case SYSCALL_PROCESS_WRUN:
 		return sys_process_wrun(a, b, (const char **) c, (int *) d, e);
+	case SYSCALL_PROCESS_RUN_WITH_PRIORITY:
+		return sys_process_run_with_priority(a, b, (const char **) c, d);
 	case SYSCALL_PROCESS_FORK:
 		return sys_process_fork();
 	case SYSCALL_PROCESS_EXEC:
@@ -575,6 +639,8 @@ int32_t syscall_handler(syscall_t n, uint32_t a, uint32_t b, uint32_t c, uint32_
 		return sys_process_self();
 	case SYSCALL_PROCESS_PARENT:
 		return sys_process_parent();
+	case SYSCALL_PROCESS_PRIORITY:
+		return sys_process_priority();
 	case SYSCALL_PROCESS_KILL:
 		return sys_process_kill(a);
 	case SYSCALL_PROCESS_REAP:
@@ -587,6 +653,8 @@ int32_t syscall_handler(syscall_t n, uint32_t a, uint32_t b, uint32_t c, uint32_
 		return sys_process_stats((struct process_stats *) a, b);
 	case SYSCALL_PROCESS_HEAP:
 		return sys_process_heap(a);
+	case SYSCALL_PROCESS_RUN_BLOCKED:
+		return sys_process_run_blocked();
 	case SYSCALL_OPEN_FILE:
 		return sys_open_file(a, (const char *)b, c, d);
 	case SYSCALL_OPEN_DIR:

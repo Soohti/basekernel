@@ -4,6 +4,7 @@
 #include "library/syscalls.h"
 #include "library/stdio.h"
 #include "library/errno.h"
+#include "kernel/process.h"
 
 void schedule_process(const char *exec, int priority) {
     int pfd = syscall_open_file(KNO_STDDIR, exec, 0, 0);
@@ -30,6 +31,6 @@ int main(int argc, char** argv) {
         schedule_process(execs[i], priorities[i]);
     }
     printf("[INFO] Processes will start running\n");
-    process_list_run();
+    syscall_process_run_blocked();
     return 0;
 }

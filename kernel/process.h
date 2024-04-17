@@ -1,3 +1,6 @@
+// Path: /kernel/process.h
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -27,8 +30,11 @@ See the file LICENSE for details.
 #define PROCESS_EXIT_NORMAL   0
 #define PROCESS_EXIT_KILLED   1
 
+#define PROCESS_BASE_PRIORITY 10
+
 struct process {
 	struct list_node node;
+	int priority;
 	int state;
 	int exitcode;
 	int exitreason;
@@ -48,8 +54,10 @@ struct process {
 void process_init();
 
 struct process *process_create();
+struct process *process_create_with_priority(int pri);
 void process_delete(struct process *p);
 void process_launch(struct process *p);
+void process_launch_with_priority(struct process *p, int pri);
 void process_pass_arguments(struct process *p, int argc, char **argv);
 void process_inherit(struct process *parent, struct process *child);
 void process_selective_inherit(struct process *parent, struct process *child, int * fds, int fd_len);
@@ -80,6 +88,8 @@ int process_wait_child(uint32_t pid, struct process_info *info, int timeout);
 int process_reap(uint32_t pid);
 
 int process_stats(int pid, struct process_stats *stat);
+
+void process_run_blocked();
 
 extern struct process *current;
 

@@ -1,3 +1,6 @@
+// Path: /library/syscalls.c
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2016-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -33,6 +36,11 @@ int syscall_process_wrun(int fd, int argc, const char **argv, int * fds, int fd_
 	return syscall(SYSCALL_PROCESS_WRUN, fd, argc, (uint32_t) argv, (uint32_t) fds, fd_len);
 }
 
+int syscall_process_run_with_priority(int fd, int argc, const char **argv, int pri)
+{
+	return syscall(SYSCALL_PROCESS_RUN_WITH_PRIORITY, fd, argc, (uint32_t) argv, pri, 0);
+}
+
 int syscall_process_fork()
 {
 	return syscall(SYSCALL_PROCESS_FORK, 0, 0, 0, 0, 0);
@@ -51,6 +59,11 @@ int syscall_process_self()
 int syscall_process_parent()
 {
 	return syscall(SYSCALL_PROCESS_PARENT, 0, 0, 0, 0, 0);
+}
+
+int syscall_process_priority()
+{
+	return syscall(SYSCALL_PROCESS_PRIORITY, 0, 0, 0, 0, 0);
 }
 
 int syscall_process_kill(unsigned int pid)
@@ -81,6 +94,11 @@ int syscall_process_stats(struct process_stats *s, unsigned int pid)
 extern void *syscall_process_heap(int a)
 {
 	return (void *) syscall(SYSCALL_PROCESS_HEAP, a, 0, 0, 0, 0);
+}
+
+int syscall_process_run_blocked()
+{
+	return syscall(SYSCALL_PROCESS_RUN_BLOCKED, 0, 0, 0, 0, 0);
 }
 
 int syscall_open_file( int fd, const char *path, int mode, kernel_flags_t flags)

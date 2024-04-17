@@ -1,3 +1,6 @@
+// Path: /kernel/process.c
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -21,6 +24,7 @@ See the file LICENSE for details.
 
 struct process *current = 0;
 struct list ready_list = { 0, 0 };
+struct list blocked_list = { 0, 0 };
 struct list grave_list = { 0, 0 };
 struct list grave_watcher_list = { 0, 0 };	// parent processes are put here to wait for their children
 struct process *process_table[PROCESS_MAX_PID] = { 0 };
@@ -219,7 +223,16 @@ struct process *process_create()
 	}
 
 	p->state = PROCESS_STATE_READY;
+	p->priority = PROCESS_BASE_PRIORITY;
 
+	return p;
+}
+
+struct process *process_create_with_priority(int pri)
+{
+	struct process *p = process_create();
+	p->state = PROCESS_STATE_CRADLE;
+	p->priority = pri;
 	return p;
 }
 
@@ -240,6 +253,11 @@ void process_delete(struct process *p)
 void process_launch(struct process *p)
 {
 	list_push_tail(&ready_list, &p->node);
+}
+
+void process_launch_with_priority(struct process *p, int pri)
+{
+	list_push_priority(&blocked_list, &p->node, pri);
 }
 
 static void process_switch(int newstate)
@@ -558,4 +576,13 @@ int process_stats(int pid, struct process_stats *s)
 	}
 	*s = process_table[pid]->stats;
 	return 0;
+}
+
+void process_run_blocked()
+{
+	struct process *p;
+	while((p = (struct process *) list_pop_head(&blocked_list))) {
+		p->state = PROCESS_STATE_READY;
+		list_push_tail(&ready_list, &p->node);
+	}
 }

@@ -1,3 +1,6 @@
+// Path: /kernel/list.c
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -11,6 +14,20 @@ void list_push_head(struct list *list, struct list_node *node)
 	node->next = list->head;
 	node->prev = 0;
 	node->priority = 0;
+	if(list->head)
+		list->head->prev = node;
+	list->head = node;
+	if(!list->tail)
+		list->tail = node;
+	node->list = list;
+	list->size++;
+}
+
+void list_push_head_priority(struct list *list, struct list_node *node, int pri)
+{
+	node->next = list->head;
+	node->prev = 0;
+	node->priority = pri;
 	if(list->head)
 		list->head->prev = node;
 	list->head = node;
@@ -39,11 +56,12 @@ void list_push_priority(struct list *list, struct list_node *node, int pri)
 	struct list_node *n;
 	int i = 0;
 	if(!list->head) {
-		list_push_head(list, node);
+		list_push_head_priority(list, node, pri);
 		return;
 	}
 	for(n = list->head; n; n = n->next) {
-		if(pri > n->priority || i > 5000) {
+		// smaller number means higher priority
+		if(pri < n->priority || i > 5000) {
 			node->next = n;
 			node->prev = n->prev;
 			node->priority = pri;
