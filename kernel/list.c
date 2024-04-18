@@ -9,11 +9,12 @@ See the file LICENSE for details.
 
 #include "list.h"
 
+// modified function: push a node to the head of the list
 void list_push_head(struct list *list, struct list_node *node)
 {
 	node->next = list->head;
 	node->prev = 0;
-	node->priority = 0;
+	node->priority = LIST_BASE_PRIORITY; // default priority
 	if(list->head)
 		list->head->prev = node;
 	list->head = node;
@@ -23,11 +24,19 @@ void list_push_head(struct list *list, struct list_node *node)
 	list->size++;
 }
 
+// new function: push a node to the head of the list with a priority
+void list_push_head_priority(struct list *list, struct list_node *node, int pri)
+{
+	list_push_head(list, node);
+	node->priority = pri;
+}
+
+// modified function: push a node to the tail of the list
 void list_push_tail(struct list *list, struct list_node *node)
 {
 	node->prev = list->tail;
 	node->next = 0;
-	node->priority = 0;
+	node->priority = LIST_BASE_PRIORITY; // default priority
 	if(list->tail)
 		list->tail->next = node;
 	list->tail = node;
@@ -37,18 +46,27 @@ void list_push_tail(struct list *list, struct list_node *node)
 	list->size++;
 }
 
+// new function: push a node to the tail of the list with a priority
+void list_push_tail_priority(struct list *list, struct list_node *node, int pri)
+{
+	list_push_tail(list, node);
+	node->priority = pri;
+}
+
+// modified function: push a node to the list with a priority
 void list_push_priority(struct list *list, struct list_node *node, int pri)
 {
 	struct list_node *n;
 	int i = 0;
+	// if the list is empty, add to the head
 	if(!list->head) {
-		list_push_head(list, node);
-		node->priority = pri;
+		list_push_head_priority(list, node, pri);
 		return;
 	}
+	// iterate through the list to find the first node with a larger priority value
+	// in case of a tie, based on FCFS, the new node is inserted after the existing nodes
 	for(n = list->head; n; n = n->next) {
-		// smaller number means higher priority
-		if(pri < n->priority || i > 5000) {
+		if(pri < n->priority || i > 5000) { // smaller value means higher priority
 			node->next = n;
 			node->prev = n->prev;
 			node->priority = pri;
@@ -64,7 +82,8 @@ void list_push_priority(struct list *list, struct list_node *node, int pri)
 		}
 		i++;
 	}
-	list_push_tail(list, node);
+	// if the new node has the lowest priority, add to the tail
+	list_push_tail_priority(list, node, pri);
 }
 
 struct list_node *list_pop_head(struct list *list)

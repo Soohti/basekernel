@@ -29,6 +29,7 @@ struct list grave_list = { 0, 0 };
 struct list grave_watcher_list = { 0, 0 };	// parent processes are put here to wait for their children
 struct process *process_table[PROCESS_MAX_PID] = { 0 };
 
+// priority of the kernel process is 0
 void process_init()
 {
 	current = process_create();
@@ -192,6 +193,7 @@ void process_stack_reset(struct process *p, unsigned size)
 	memset((void *) -size, size, 0);
 }
 
+// modified function: create a process
 struct process *process_create()
 {
 	struct process *p;
@@ -223,15 +225,16 @@ struct process *process_create()
 	}
 
 	p->state = PROCESS_STATE_READY;
-	p->priority = PROCESS_BASE_PRIORITY;
+	p->priority = PROCESS_BASE_PRIORITY; // default priority
 
 	return p;
 }
 
+// new function: create a process with priority
 struct process *process_create_with_priority(int pri)
 {
 	struct process *p = process_create();
-	p->state = PROCESS_STATE_CRADLE;
+	p->state = PROCESS_STATE_CRADLE; // the process is temporarily blocked
 	p->priority = pri;
 	return p;
 }
@@ -255,6 +258,7 @@ void process_launch(struct process *p)
 	list_push_tail(&ready_list, &p->node);
 }
 
+// new function: launch a process with priority
 void process_launch_with_priority(struct process *p, int pri)
 {
 	list_push_priority(&blocked_list, &p->node, pri);
@@ -578,11 +582,12 @@ int process_stats(int pid, struct process_stats *s)
 	return 0;
 }
 
+// new function: run all blocked processes
 void process_run_blocked()
 {
 	struct process *p;
 	while((p = (struct process *) list_pop_head(&blocked_list))) {
-		p->state = PROCESS_STATE_READY;
-		list_push_tail(&ready_list, &p->node);
+		p->state = PROCESS_STATE_READY; // allow the process to run
+		list_push_tail_priority(&ready_list, &p->node, p->priority);
 	}
 }
