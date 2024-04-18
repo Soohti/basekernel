@@ -582,12 +582,38 @@ int process_stats(int pid, struct process_stats *s)
 	return 0;
 }
 
-// new function: run all blocked processes
-void process_run_blocked()
+// new function: unblock a process
+int process_unblock(struct process *p)
+{
+	if(p->state == PROCESS_STATE_CRADLE) {
+		p->state = PROCESS_STATE_READY;
+		list_push_tail_priority(&ready_list, &p->node, p->priority);
+		return 0;
+	}
+	return 1;
+}
+
+// new function: run the highest priority blocked process
+int process_run_blocked()
 {
 	struct process *p;
-	while((p = (struct process *) list_pop_head(&blocked_list))) {
-		p->state = PROCESS_STATE_READY; // allow the process to run
-		list_push_tail_priority(&ready_list, &p->node, p->priority);
+	if(!blocked_list.head) {
+		return 1;
 	}
+	p = (struct process *) list_pop_head(&blocked_list);
+	process_unblock(p);
+	return 0;
+}
+
+// new function: run all blocked processes
+int process_run_blocked_all()
+{
+	struct process *p;
+	if(!blocked_list.head) {
+		return 1;
+	}
+	while((p = (struct process *) list_pop_head(&blocked_list))) {
+		process_unblock(p);
+	}
+	return 0;
 }

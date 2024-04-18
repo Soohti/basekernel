@@ -31,7 +31,8 @@ typedef enum {
 	SYSCALL_PROCESS_SLEEP,
 	SYSCALL_PROCESS_STATS,
 	SYSCALL_PROCESS_HEAP,
-	SYSCALL_PROCESS_RUN_BLOCKED, // new syscall: run all blocked processes
+	SYSCALL_PROCESS_RUN_BLOCKED, // new syscall: run the highest priority blocked process
+	SYSCALL_PROCESS_RUN_BLOCKED_ALL, // new syscall: run all blocked processes
 	SYSCALL_OPEN_FILE,
 	SYSCALL_OPEN_DIR,
 	SYSCALL_OPEN_WINDOW,

@@ -30,6 +30,6 @@ int main(int argc, char** argv) {
         schedule_process(execs[i], priorities[i]);
     }
     printf("[INFO] Processes will start running\n");
-    syscall_process_run_blocked();
+    syscall_process_run_blocked_all();
     return 0;
 }

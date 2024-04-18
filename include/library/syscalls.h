@@ -33,7 +33,8 @@ int syscall_process_wait(struct process_info *info, int timeout);
 int syscall_process_sleep(unsigned int ms);
 int syscall_process_stats(struct process_stats *s, unsigned int pid);
 extern void *syscall_process_heap(int a);
-int syscall_process_run_blocked(); // new syscall: run all blocked processes
+int syscall_process_run_blocked(); // new syscall: run the highest priority blocked process
+int syscall_process_run_blocked_all(); // new syscall: run all blocked processes
 
 /* Syscalls that open or create new kernel objects for this process. */
 

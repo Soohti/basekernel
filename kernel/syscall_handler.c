@@ -200,6 +200,7 @@ int sys_process_wrun( int fd, int argc, const char **argv, int *fds, int fd_len)
 	return p->pid;
 }
 
+// new syscall: schedule a process with priority
 int sys_process_run_with_priority(int fd, int argc, const char **argv, int pri)
 {
 	if(!is_valid_object_type(fd,KOBJECT_FILE)) return KERROR_INVALID_OBJECT;
@@ -312,6 +313,7 @@ int sys_process_parent()
 	return current->ppid;
 }
 
+// new syscall: get priority of current process
 int sys_process_priority()
 {
 	return current->priority;
@@ -351,10 +353,16 @@ int sys_process_heap(int delta)
 	return PROCESS_ENTRY_POINT + current->vm_data_size;
 }
 
+// new syscall: run the highest priority blocked process
 int sys_process_run_blocked()
 {
-	process_run_blocked();
-	return 0;
+	return process_run_blocked();
+}
+
+// new syscall: run all blocked processes
+int sys_process_run_blocked_all()
+{
+	return process_run_blocked_all();
 }
 
 int sys_object_list( int fd, char *buffer, int length)
@@ -655,6 +663,8 @@ int32_t syscall_handler(syscall_t n, uint32_t a, uint32_t b, uint32_t c, uint32_
 		return sys_process_heap(a);
 	case SYSCALL_PROCESS_RUN_BLOCKED:
 		return sys_process_run_blocked();
+	case SYSCALL_PROCESS_RUN_BLOCKED_ALL:
+		return sys_process_run_blocked_all();
 	case SYSCALL_OPEN_FILE:
 		return sys_open_file(a, (const char *)b, c, d);
 	case SYSCALL_OPEN_DIR:

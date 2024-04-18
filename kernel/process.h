@@ -89,7 +89,9 @@ int process_reap(uint32_t pid);
 
 int process_stats(int pid, struct process_stats *stat);
 
-void process_run_blocked();
+int process_unblock(struct process *p);
+int process_run_blocked();
+int process_run_blocked_all();
 
 extern struct process *current;
 
