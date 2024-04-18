@@ -9,4 +9,3 @@ kernel/kernel
 kernel/bootblock
 cross
 .vscode
-Makefile.config.bak
