@@ -458,13 +458,50 @@ int sys_open_pipe()
 {
 	int fd = process_available_fd(current);
 	if(fd < 0) {
-		return KERROR_NOT_FOUND;
+		return KERROR_OUT_OF_OBJECTS;
 	}
 	struct pipe *p = pipe_create();
 	if(!p) {
 		return KERROR_NOT_FOUND;
 	}
 	current->ktable[fd] = kobject_create_pipe(p);
+	return fd;
+}
+
+int syscall_make_named_pipe(const char *fname){
+	if(!is_valid_path(fname)) {
+		return KERROR_INVALID_PATH;
+	}
+
+	int res = named_pipe_create(fname);
+
+	return res;
+}
+
+int syscall_open_named_pipe(const char * fname){
+	if(!is_valid_path(fname)) {
+		return KERROR_INVALID_PATH;
+	}
+	
+	struct fs_dirent *f = fs_resolve(fname);
+
+	if(!f) {
+		return KERROR_NOT_FOUND;
+	}
+
+	struct named_pipe *np = named_pipe_open(f);
+	fs_dirent_close(f);
+
+	if(!np) {
+		return KERROR_NOT_A_PIPE;
+	}
+
+	int fd = process_available_fd(current);
+	if(fd < 0) {
+		return KERROR_OUT_OF_OBJECTS;
+	}
+	current->ktable[fd] = kobject_create_named_pipe(np);
+	
 	return fd;
 }
 
