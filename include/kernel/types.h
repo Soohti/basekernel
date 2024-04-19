@@ -51,6 +51,7 @@ typedef enum {
 	KOBJECT_DEVICE,
 	KOBJECT_WINDOW,
 	KOBJECT_PIPE,
+	KOBJECT_NAMED_PIPE,
 	KOBJECT_CONSOLE
 } kobject_type_t;
 
