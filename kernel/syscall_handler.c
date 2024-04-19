@@ -468,30 +468,26 @@ int sys_open_pipe()
 	return fd;
 }
 
-int syscall_make_named_pipe(const char *fname){
+int sys_make_named_pipe(const char *fname){
 	if(!is_valid_path(fname)) {
 		return KERROR_INVALID_PATH;
 	}
-
 	int res = named_pipe_create(fname);
-
 	return res;
 }
 
-int syscall_open_named_pipe(const char * fname){
+int sys_open_named_pipe(const char * fname){
 	if(!is_valid_path(fname)) {
 		return KERROR_INVALID_PATH;
 	}
 	
 	struct fs_dirent *f = fs_resolve(fname);
-
 	if(!f) {
 		return KERROR_NOT_FOUND;
 	}
 
 	struct named_pipe *np = named_pipe_open(f);
 	fs_dirent_close(f);
-
 	if(!np) {
 		return KERROR_NOT_A_PIPE;
 	}
@@ -501,7 +497,6 @@ int syscall_open_named_pipe(const char * fname){
 		return KERROR_OUT_OF_OBJECTS;
 	}
 	current->ktable[fd] = kobject_create_named_pipe(np);
-	
 	return fd;
 }
 
@@ -702,6 +697,10 @@ int32_t syscall_handler(syscall_t n, uint32_t a, uint32_t b, uint32_t c, uint32_
 		return sys_process_run_blocked();
 	case SYSCALL_PROCESS_RUN_BLOCKED_ALL:
 		return sys_process_run_blocked_all();
+	case SYSCALL_MAKE_NAMED_PIPE:
+		return sys_make_named_pipe((const char *)a);
+	case SYSCALL_OPEN_NAMED_PIPE:
+		return sys_open_named_pipe((const char *)a);
 	case SYSCALL_OPEN_FILE:
 		return sys_open_file(a, (const char *)b, c, d);
 	case SYSCALL_OPEN_DIR:

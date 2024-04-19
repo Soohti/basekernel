@@ -38,6 +38,8 @@ int syscall_process_run_blocked_all(); // new syscall: run all blocked processes
 
 /* Syscalls that open or create new kernel objects for this process. */
 
+int syscall_make_named_pipe(const char *path);
+int syscall_open_named_pipe(const char *path);
 int syscall_open_file(int fd, const char *path, int mode, kernel_flags_t flags);
 int syscall_open_dir( int fd, const char *path, kernel_flags_t flags );
 int syscall_open_window(int fd, int x, int y, int w, int h);

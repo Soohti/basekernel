@@ -106,6 +106,16 @@ int syscall_process_run_blocked_all()
 	return syscall(SYSCALL_PROCESS_RUN_BLOCKED_ALL, 0, 0, 0, 0, 0);
 }
 
+int syscall_make_named_pipe(const char *path)
+{
+	return syscall(SYSCALL_MAKE_NAMED_PIPE, (uint32_t) path, 0, 0, 0, 0);
+}
+
+int syscall_open_named_pipe(const char *path)
+{
+	return syscall(SYSCALL_OPEN_NAMED_PIPE, (uint32_t) path, 0, 0, 0, 0);
+}
+
 int syscall_open_file( int fd, const char *path, int mode, kernel_flags_t flags)
 {
 	return syscall(SYSCALL_OPEN_FILE, fd, (uint32_t) path, mode, flags, 0);
