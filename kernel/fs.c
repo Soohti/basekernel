@@ -104,7 +104,7 @@ struct fs_dirent *fs_mkfile(const char *path)
 {
 	// First, resolve the path to the parent directory.
 	// find the last slash in the path
-	struct fs_dirent *parent = kmalloc(sizeof(*parent);
+	struct fs_dirent *parent = kmalloc(sizeof(*parent));
 	if(!parent) {
 		// KERROR_NO_MEM
 		return 0;
