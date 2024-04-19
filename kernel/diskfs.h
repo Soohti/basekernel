@@ -1,3 +1,6 @@
+// Path: /kernel/diskfs.h
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2016-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -8,6 +11,8 @@ See the file LICENSE for details.
 #define DISKFS_H
 
 #include "kernel/types.h"
+#include "named_pipe.h"
+#include "fs.h"
 
 #define DISKFS_MAGIC 0xabcd4321
 #define DISKFS_BLOCK_SIZE 4096
@@ -32,7 +37,10 @@ struct diskfs_inode {
 	uint32_t size;
 	uint32_t direct[DISKFS_DIRECT_POINTERS];
 	uint32_t indirect;
+	struct named_pipe *i_pipe;
 };
+
+int diskfs_inode_bind_named_pipe(struct fs_dirent *d, struct named_pipe *p);
 
 #define DISKFS_ITEM_BLANK 0
 #define DISKFS_ITEM_FILE 1

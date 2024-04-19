@@ -1,3 +1,6 @@
+// Path: /kernel/diskfs.c
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -248,6 +251,13 @@ int diskfs_inode_write( struct fs_dirent *d, struct diskfs_block *b, uint32_t bl
 	}
 
 	return diskfs_data_block_write(d->volume,b,actual);
+}
+
+int diskfs_inode_bind_named_pipe( struct fs_dirent *d, struct named_pipe *np )
+{
+	d->disk.i_pipe = np;
+	diskfs_inode_save(d->volume,d->inumber,&d->disk);
+	return 1;
 }
 
 struct fs_dirent * diskfs_dirent_create( struct fs_volume *volume, int inumber, int type )
