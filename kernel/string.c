@@ -1,3 +1,6 @@
+// Path: /kernel/string.c
+// Midified by CS3103 Group 70
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -104,6 +107,17 @@ const char *strchr(const char *s, char ch)
 		s++;
 	}
 	return 0;
+}
+
+const char *strrchr(const char *s, char ch)
+{
+	const char *last = 0;
+	while(*s) {
+		if(*s == ch)
+			last = s;
+		s++;
+	}
+	return last;
 }
 
 char *strtok(char *s, const char *delim)

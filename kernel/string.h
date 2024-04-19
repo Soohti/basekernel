@@ -1,3 +1,6 @@
+// Path: /kernel/string.h
+// Midified by CS3103 Group 70
+
 /*
 Copyright (C) 2015-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -27,6 +30,7 @@ void strtolower(char *s);
 int str2int(const char *s, int *d);
 
 const char *strchr(const char *s, char ch);
+const char *strrchr(const char *s, char ch);
 
 void memset(void *d, char value, unsigned length);
 void memcpy(void *d, const void *s, unsigned length);
