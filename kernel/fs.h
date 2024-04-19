@@ -1,3 +1,6 @@
+// Path: /kernel/fs.h
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2016-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -25,6 +28,14 @@ process and returns a dirent.
 */
 
 struct fs_dirent *fs_resolve(const char *path);
+
+/*
+fs_mkfile creates a new file at the given path.
+It first resolves the path to the parent directory, then
+creates the file in that directory.
+*/
+
+struct fs_dirent *fs_mkfile(const char *path);
 
 /*
 fs_lookup returns the filesystem driver corresponding to

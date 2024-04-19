@@ -1,3 +1,6 @@
+// Path: /kernel/fs.c
+// Modified by CS3103 Group 70
+
 /*
 Copyright (C) 2016-2019 The University of Notre Dame
 This software is distributed under the GNU General Public License.
@@ -95,6 +98,43 @@ struct fs_dirent *fs_resolve(const char *path)
 
 	// If there was no tag, then navigate from the current working directory.
 	return fs_dirent_traverse(fs_getcurrent(current), path);
+}
+
+struct fs_dirent *fs_mkfile(const char *path)
+{
+	// First, resolve the path to the parent directory.
+	// find the last slash in the path
+	struct fs_dirent *parent = kmalloc(sizeof(*parent);
+	if(!parent) {
+		// KERROR_NO_MEM
+		return 0;
+	}
+	const char *last_slash = strrchr(path, '/');
+	if(last_slash) {
+		// Copy the path up to the last slash.
+		char *parent_path = kmalloc(last_slash - path + 1);
+		strncpy(parent_path, path, last_slash - path);
+		parent_path[last_slash - path] = 0;
+
+		// Resolve the parent directory.
+		parent = fs_resolve(parent_path);
+		kfree(parent_path);
+	}
+	else {
+		// If there is no slash, the parent directory is the current directory.
+		parent = fs_getcurrent(current);
+	}
+	const char *name = last_slash ? last_slash + 1 : path;
+
+	if(!parent) {
+		// KERROR_NOT_FOUND
+		return 0;
+	}
+
+	// Create the file in the parent directory.
+	struct fs_dirent *file = fs_dirent_mkfile(parent, name);
+	fs_dirent_close(parent);
+	return file;
 }
 
 void fs_register(struct fs *f)
