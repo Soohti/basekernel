@@ -14,6 +14,7 @@
 #include "window.h"
 #include "console.h"
 #include "pipe.h"
+#include "named_pipe.h"
 
 #include "kernel/error.h"
 
@@ -348,7 +349,7 @@ int kobject_close(struct kobject *kobject)
 			pipe_delete(kobject->data.pipe);
 			break;
 		case KOBJECT_NAMED_PIPE:
-			named_pipe_delete(kobject->data.named_pipe);
+			named_pipe_close(kobject->data.named_pipe);
 			break;
 		default:
 			break;

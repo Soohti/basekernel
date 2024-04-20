@@ -260,6 +260,11 @@ int diskfs_inode_bind_named_pipe( struct fs_dirent *d, struct named_pipe *np )
 	return 1;
 }
 
+struct named_pipe * diskfs_inode_get_named_pipe( struct fs_dirent *d )
+{
+	return d->disk.i_pipe;
+}
+
 struct fs_dirent * diskfs_dirent_create( struct fs_volume *volume, int inumber, int type )
 {
 	struct fs_dirent *d = kmalloc(sizeof(*d));

@@ -40,7 +40,8 @@ struct diskfs_inode {
 	struct named_pipe *i_pipe;
 };
 
-int diskfs_inode_bind_named_pipe(struct fs_dirent *d, struct named_pipe *p);
+int diskfs_inode_bind_named_pipe(struct fs_dirent *d, struct named_pipe *np);
+struct named_pipe *diskfs_inode_get_named_pipe(struct fs_dirent *d);
 
 #define DISKFS_ITEM_BLANK 0
 #define DISKFS_ITEM_FILE 1

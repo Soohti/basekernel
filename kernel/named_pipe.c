@@ -24,7 +24,7 @@ int named_pipe_create(char *fname)
 	}
 	// create a pipe for named_pipe
 	np->p = pipe_create();
-	np->refcount = 1;
+	np->refcount = 0;
 
 	// connect the inode of file f with named_pipe
 	int res = diskfs_inode_bind_named_pipe(f, np);
@@ -42,8 +42,13 @@ int named_pipe_destroy(char *fname)
 
 struct named_pipe *named_pipe_open(struct fs_dirent *f)
 {
-	// return named_pipe pointed by the inode of fs_dirent *f
-	return f->disk.i_pipe;
+	struct named_pipe *np = diskfs_inode_get_named_pipe(f);
+	if (!np)
+	{
+		return 0;
+	}
+	np->refcount++;
+	return np;
 }
 
 int named_pipe_size(struct named_pipe *np)
@@ -56,7 +61,7 @@ void named_pipe_flush(struct named_pipe *np)
 	pipe_flush(np->p);
 }
 
-void named_pipe_delete(struct named_pipe *np)
+void named_pipe_close(struct named_pipe *np)
 {
 	if (!np)
 		return;
@@ -81,7 +86,7 @@ int named_pipe_read(struct named_pipe *np, char *buffer, int size)
 
 int named_pipe_read_nonblock(struct named_pipe *np, char *buffer, int size)
 {
-	return pipe_read(np->p, buffer, size);
+	return pipe_read_nonblock(np->p, buffer, size);
 }
 
 int named_pipe_write(struct named_pipe *np, char *buffer, int size)
@@ -91,5 +96,5 @@ int named_pipe_write(struct named_pipe *np, char *buffer, int size)
 
 int named_pipe_write_nonblock(struct named_pipe *np, char *buffer, int size)
 {
-	return pipe_write(np->p, buffer, size);
+	return pipe_write_nonblock(np->p, buffer, size);
 }
