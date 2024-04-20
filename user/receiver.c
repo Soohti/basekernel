@@ -24,5 +24,6 @@ int main()
     syscall_object_read(fd, buffer, 20, 0);
     printf("%s\n", buffer);
     syscall_destroy_named_pipe(fname);
+    printf("[INFO] Destroyed named pipe at %s.\n", fname);
     return 0;
 }
