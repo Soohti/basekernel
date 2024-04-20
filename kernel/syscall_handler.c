@@ -371,6 +371,9 @@ int sys_make_named_pipe(const char *fname){
 		return KERROR_INVALID_PATH;
 	}
 	int res = named_pipe_create(fname);
+	if(!res) {
+		return KERROR_EXECUTION_FAILED;
+	}
 	return res;
 }
 
