@@ -64,8 +64,8 @@ void named_pipe_delete(struct named_pipe *np)
 	if (np->refcount == 0)
 	{
 		pipe_delete(np->p);
+		kfree(np);
 	}
-	kfree(np);
 }
 
 struct named_pipe *named_pipe_addref(struct named_pipe *np)
