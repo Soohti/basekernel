@@ -365,12 +365,47 @@ int sys_process_run_blocked_all()
 	return process_run_blocked_all();
 }
 
-int sys_object_list( int fd, char *buffer, int length)
-{
-	if(!is_valid_object(fd)) return KERROR_INVALID_OBJECT;
-	if(!is_valid_pointer(buffer,length)) return KERROR_INVALID_ADDRESS;
-	if(kobject_get_type(current->ktable[fd])!=KOBJECT_DIR) return KERROR_NOT_A_DIRECTORY;
-	return kobject_list(current->ktable[fd],buffer,length);
+// new syscall: create a named pipe
+int sys_make_named_pipe(const char *fname){
+	if(!is_valid_path(fname)) {
+		return KERROR_INVALID_PATH;
+	}
+	int res = named_pipe_create(fname);
+	return res;
+}
+
+// new syscall: destroy a named pipe
+int sys_destroy_named_pipe(const char *fname){
+	if(!is_valid_path(fname)) {
+		return KERROR_INVALID_PATH;
+	}
+	int res = named_pipe_destroy(fname);
+	return res;
+}
+
+// new syscall: open a named pipe
+int sys_open_named_pipe(const char * fname){
+	if(!is_valid_path(fname)) {
+		return KERROR_INVALID_PATH;
+	}
+	
+	struct fs_dirent *f = fs_resolve(fname);
+	if(!f) {
+		return KERROR_NOT_FOUND;
+	}
+
+	struct named_pipe *np = named_pipe_open(f);
+	fs_dirent_close(f);
+	if(!np) {
+		return KERROR_NOT_A_PIPE;
+	}
+
+	int fd = process_available_fd(current);
+	if(fd < 0) {
+		return KERROR_OUT_OF_OBJECTS;
+	}
+	current->ktable[fd] = kobject_create_named_pipe(np);
+	return fd;
 }
 
 int sys_open_file( int fd, const char *path, int mode, kernel_flags_t flags)
@@ -468,38 +503,6 @@ int sys_open_pipe()
 	return fd;
 }
 
-int sys_make_named_pipe(const char *fname){
-	if(!is_valid_path(fname)) {
-		return KERROR_INVALID_PATH;
-	}
-	int res = named_pipe_create(fname);
-	return res;
-}
-
-int sys_open_named_pipe(const char * fname){
-	if(!is_valid_path(fname)) {
-		return KERROR_INVALID_PATH;
-	}
-	
-	struct fs_dirent *f = fs_resolve(fname);
-	if(!f) {
-		return KERROR_NOT_FOUND;
-	}
-
-	struct named_pipe *np = named_pipe_open(f);
-	fs_dirent_close(f);
-	if(!np) {
-		return KERROR_NOT_A_PIPE;
-	}
-
-	int fd = process_available_fd(current);
-	if(fd < 0) {
-		return KERROR_OUT_OF_OBJECTS;
-	}
-	current->ktable[fd] = kobject_create_named_pipe(np);
-	return fd;
-}
-
 int sys_object_type(int fd)
 {
 	if(!is_valid_object(fd)) return KERROR_INVALID_OBJECT;
@@ -534,6 +537,14 @@ int sys_object_read(int fd, void *data, int length, kernel_io_flags_t flags )
 
 	struct kobject *p = current->ktable[fd];
 	return kobject_read(p, data, length, flags);
+}
+
+int sys_object_list( int fd, char *buffer, int length)
+{
+	if(!is_valid_object(fd)) return KERROR_INVALID_OBJECT;
+	if(!is_valid_pointer(buffer,length)) return KERROR_INVALID_ADDRESS;
+	if(kobject_get_type(current->ktable[fd])!=KOBJECT_DIR) return KERROR_NOT_A_DIRECTORY;
+	return kobject_list(current->ktable[fd],buffer,length);
 }
 
 int sys_object_write(int fd, void *data, int length, kernel_io_flags_t flags )
@@ -699,6 +710,8 @@ int32_t syscall_handler(syscall_t n, uint32_t a, uint32_t b, uint32_t c, uint32_
 		return sys_process_run_blocked_all();
 	case SYSCALL_MAKE_NAMED_PIPE:
 		return sys_make_named_pipe((const char *)a);
+	case SYSCALL_DESTROY_NAMED_PIPE:
+		return sys_destroy_named_pipe((const char *)a);
 	case SYSCALL_OPEN_NAMED_PIPE:
 		return sys_open_named_pipe((const char *)a);
 	case SYSCALL_OPEN_FILE:

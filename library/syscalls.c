@@ -111,6 +111,11 @@ int syscall_make_named_pipe(const char *path)
 	return syscall(SYSCALL_MAKE_NAMED_PIPE, (uint32_t) path, 0, 0, 0, 0);
 }
 
+int syscall_destroy_named_pipe(const char *path)
+{
+	return syscall(SYSCALL_DESTROY_NAMED_PIPE, (uint32_t) path, 0, 0, 0, 0);
+}
+
 int syscall_open_named_pipe(const char *path)
 {
 	return syscall(SYSCALL_OPEN_NAMED_PIPE, (uint32_t) path, 0, 0, 0, 0);

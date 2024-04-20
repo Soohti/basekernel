@@ -14,6 +14,7 @@ struct named_pipe
 };
 
 int named_pipe_create(char *fname);
+int named_pipe_destroy(char *fname);
 struct named_pipe *named_pipe_open(struct fs_dirent *f);
 int named_pipe_size(struct named_pipe *np);
 void named_pipe_flush(struct named_pipe *np);

@@ -33,6 +33,13 @@ int named_pipe_create(char *fname)
 	return res;
 }
 
+int named_pipe_destroy(char *fname)
+{
+	// delete the file pointing to named_pipe
+	int res = fs_remove(fname);
+	return res;
+}
+
 struct named_pipe *named_pipe_open(struct fs_dirent *f)
 {
 	// return named_pipe pointed by the inode of fs_dirent *f

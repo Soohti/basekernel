@@ -34,6 +34,7 @@ typedef enum {
 	SYSCALL_PROCESS_RUN_BLOCKED, // new syscall: run the highest priority blocked process
 	SYSCALL_PROCESS_RUN_BLOCKED_ALL, // new syscall: run all blocked processes
 	SYSCALL_MAKE_NAMED_PIPE, // new syscall: create a named pipe
+	SYSCALL_DESTROY_NAMED_PIPE, // new syscall: destroy a named pipe
 	SYSCALL_OPEN_NAMED_PIPE, // new syscall: open a named pipe
 	SYSCALL_OPEN_FILE,
 	SYSCALL_OPEN_DIR,
