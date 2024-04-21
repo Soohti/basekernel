@@ -324,7 +324,7 @@ int main()
 
   ` int kobject_write(struct kobject *, void *, int , kernel_io_flags_t)`,
 
-   ` int kobject_close(struct kobject *)`, 
+  ` int kobject_close(struct kobject *)`, 
 
   `int kobject_size(struct kobject *, int *, int)`: 
 
