@@ -2,7 +2,11 @@
 
 Course Project for CS3103 Operating Systems, Semester B 2023/24, City University of Hong Kong.
 
-This project is an extension of the Basekernel Operating System Kernel. The extension includes two parts: priority-based scheduling and named pipe. Please visit our [Changelog](CHANGELOG.md) for more information on the changes.
+This project is an extension of the [Basekernel Operating System Kernel](https://github.com/dthain/basekernel). The extension includes two parts: priority-based scheduling and named pipe. Please visit our [Changelog](CHANGELOG.md) for more information on the changes.
+
+![Priority-based scheduling](./screenshots/scheduler_test.png)
+
+![Named pipe](./screenshots/named_pipe_test.png)
 
 To learn more about Basekernel, see the [Basekernel Wiki](https://github.com/dthain/basekernel/wiki).
 
