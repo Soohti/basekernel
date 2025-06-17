@@ -2,7 +2,7 @@
 // Created by CS3103 Group 70
 
 #include "library/syscalls.h"
-#include "library/stdio.h"
+#include "library/string.h"
 #include "library/errno.h"
 
 void schedule_process(const char *exec, int priority) {

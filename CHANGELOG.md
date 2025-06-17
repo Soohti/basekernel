@@ -240,6 +240,9 @@ Mechanism design: The implementation involves several key modifications:
 `user/receiver.c`:
 
   ```c
+#include "library/errno.h"
+#include "library/malloc.h"
+#include "library/string.h"
 #include "library/syscalls.h"
 
 int main()
@@ -271,6 +274,8 @@ int main()
 `user/sender.c`:
 
   ```c
+#include "library/errno.h"
+#include "library/string.h"
 #include "library/syscalls.h"
 
 int main()

@@ -1,9 +1,30 @@
 name: Build Basekernel Image
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag for the release (e.g. v1.2.3)'
+        required: true
+      release_name:
+        description: 'Release title'
+        required: false
+        default: ''
+      body:
+        description: 'Release notes'
+        required: false
+        default: ''
+      draft:
+        description: 'Create as draft?'
+        required: false
+        default: 'false'
+      prerelease:
+        description: 'Create as prerelease?'
+        required: false
+        default: 'false'
   
 jobs:
-  build:
+  make_release:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,13 +34,29 @@ jobs:
       run: sudo apt-get install -y genisoimage
 
     - name: Get Cross Compiler
-      run: wget https://github.com/Soohti/static/releases/download/cross_compiler/Cross.Compiler.zip && unzip Cross.Compiler.zip
+      run: wget https://github.com/Soohti/basekernel/releases/download/cross_compiler/Cross.Compiler.zip && unzip Cross.Compiler.zip
       
     - name: Build Basekernal & Generate QEMU Image
       run: export PATH="$PWD/cross/bin:$PATH" && make
 
-    - name: Upload QEMU Image
-      uses: actions/upload-artifact@v4
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
       with:
-        name: QEMU Image
-        path: basekernel.iso
+        tag_name: ${{ github.event.inputs.tag }}
+        release_name: ${{ github.event.inputs.release_name }}
+        body: ${{ github.event.inputs.body }}
+        draft: ${{ github.event.inputs.draft }}
+        prerelease: ${{ github.event.inputs.prerelease }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./basekernel.iso
+        asset_name: basekernel.iso
+        asset_content_type: application/octet-stream
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

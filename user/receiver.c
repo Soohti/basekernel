@@ -1,6 +1,9 @@
 // Path: /user/receiver.c
 // Created by CS3103 Group 70
 
+#include "library/errno.h"
+#include "library/malloc.h"
+#include "library/string.h"
 #include "library/syscalls.h"
 
 int main()

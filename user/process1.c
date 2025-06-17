@@ -2,7 +2,7 @@
 // Created by CS3103 Group 70
 
 #include "library/syscalls.h"
-#include "library/stdio.h"
+#include "library/string.h"
 
 void runForSeconds(int seconds) {
     unsigned int startTime;

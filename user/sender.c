@@ -1,6 +1,8 @@
 // Path: /user/sender.c
 // Created by CS3103 Group 70
 
+#include "library/errno.h"
+#include "library/string.h"
 #include "library/syscalls.h"
 
 int main()

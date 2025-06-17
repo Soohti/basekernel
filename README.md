@@ -23,4 +23,9 @@ $ export PATH="$PWD/cross/bin:$PATH"
 $ make run
 ```
 
-Alternatively, you can download the kernel image built by [this workflow](https://github.com/Soohti/CS3103-Project/actions/runs/8772196800).
+Alternatively, you can download the kernel image built by an automated workflow in the [Releases](https://github.com/Soohti/basekernel/releases) and run it with QEMU:
+
+```bash
+$ qemu-img create disk.img 10M
+$ qemu-system-i386 -cdrom basekernel.iso -hda disk.img
+```
